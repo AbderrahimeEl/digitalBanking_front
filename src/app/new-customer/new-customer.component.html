@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="card col-md-6 offset-3 mt-2">
+    <div class="card-header">New Customer</div>
+    <div class="card-body">
+      <form [formGroup]="newCustomerFormGroup" (ngSubmit)="handleSaveCustomer()">
+        <div class="mb-3">
+          <label class="form-label">First Name:</label>
+          <input type="text" formControlName="firstName" class="form-control">
+          <span class="text-danger"
+                *ngIf="newCustomerFormGroup.controls['firstName'].touched
+                && newCustomerFormGroup.controls['firstName'].errors
+                && newCustomerFormGroup.controls['firstName'].errors!['required']">
+            First Name is Required
+          </span>
+          <span class="text-danger"
+                *ngIf="newCustomerFormGroup.controls['firstName'].touched
+                && newCustomerFormGroup.controls['firstName'].errors
+                && newCustomerFormGroup.controls['firstName'].errors!['minlength']">
+            First Name must be at least 2 characters
+          </span>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Last Name:</label>
+          <input type="text" formControlName="lastName" class="form-control">
+          <span class="text-danger"
+                *ngIf="newCustomerFormGroup.controls['lastName'].touched
+                && newCustomerFormGroup.controls['lastName'].errors
+                && newCustomerFormGroup.controls['lastName'].errors!['required']">
+            Last Name is Required
+          </span>
+          <span class="text-danger"
+                *ngIf="newCustomerFormGroup.controls['lastName'].touched
+                && newCustomerFormGroup.controls['lastName'].errors
+                && newCustomerFormGroup.controls['lastName'].errors!['minlength']">
+            Last Name must be at least 2 characters
+          </span>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email:</label>
+          <input type="text" formControlName="email" class="form-control">
+          <span class="text-danger"
+                *ngIf="newCustomerFormGroup.controls['email'].touched
+                && newCustomerFormGroup.controls['email'].errors
+                && newCustomerFormGroup.controls['email'].errors!['email']">
+            Email is not valid
+          </span>
+        </div>
+        <button [disabled]="!newCustomerFormGroup.valid" class="btn btn-info">Save</button>
+      </form>
+    </div>
+  </div>
+</div>
