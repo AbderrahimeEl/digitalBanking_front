@@ -1,7 +1,7 @@
 export interface BankAccountDTO {
   id: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string | Date;
+  updatedAt: string | Date;
   balance: number;
   status: 'ACTIVE' | 'INACTIVE';
   currency: string;
@@ -12,7 +12,7 @@ export interface BankAccountDTO {
 
 export interface AccountOperationDTO {
   id: number;
-  date: Date;
+  date: string | Date;
   amount: number;
   type: 'DEBIT' | 'CREDIT';
   bankAccountId: number;

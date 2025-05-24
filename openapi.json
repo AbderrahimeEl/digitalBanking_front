@@ -1,5 +1,5 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.1",
   "info": {
     "title": "OpenAPI definition",
     "version": "v0"
@@ -16,7 +16,7 @@
         "tags": [
           "account-operation-controller"
         ],
-        "operationId": "getOperationById",
+        "operationId": "one",
         "parameters": [],
         "responses": {
           "200": {
@@ -35,7 +35,7 @@
         "tags": [
           "account-operation-controller"
         ],
-        "operationId": "updateOperation",
+        "operationId": "update",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -64,7 +64,7 @@
         "tags": [
           "account-operation-controller"
         ],
-        "operationId": "deleteOperation",
+        "operationId": "delete",
         "parameters": [],
         "responses": {
           "200": {
@@ -78,7 +78,7 @@
         "tags": [
           "customer-controller"
         ],
-        "operationId": "one",
+        "operationId": "one_1",
         "parameters": [],
         "responses": {
           "200": {
@@ -97,7 +97,7 @@
         "tags": [
           "customer-controller"
         ],
-        "operationId": "update",
+        "operationId": "update_1",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -126,7 +126,7 @@
         "tags": [
           "customer-controller"
         ],
-        "operationId": "delete",
+        "operationId": "delete_1",
         "parameters": [],
         "responses": {
           "200": {
@@ -135,23 +135,13 @@
         }
       }
     },
-    "/api/bank-account": {
-      "put": {
+    "/api/accounts/{id}": {
+      "get": {
         "tags": [
           "bank-account-controller"
         ],
-        "operationId": "updateBankAccount",
+        "operationId": "one_2",
         "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BankAccountDTO"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "OK",
@@ -165,11 +155,12 @@
           }
         }
       },
-      "post": {
+      "put": {
         "tags": [
           "bank-account-controller"
         ],
-        "operationId": "createBankAccount",
+        "operationId": "update_2",
+        "parameters": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -197,7 +188,7 @@
         "tags": [
           "bank-account-controller"
         ],
-        "operationId": "deleteBankAccount",
+        "operationId": "delete_2",
         "parameters": [],
         "responses": {
           "200": {
@@ -211,7 +202,7 @@
         "tags": [
           "account-operation-controller"
         ],
-        "operationId": "getAllOperations",
+        "operationId": "all",
         "responses": {
           "200": {
             "description": "OK",
@@ -232,7 +223,7 @@
         "tags": [
           "account-operation-controller"
         ],
-        "operationId": "createOperation",
+        "operationId": "create",
         "requestBody": {
           "content": {
             "application/json": {
@@ -257,108 +248,12 @@
         }
       }
     },
-    "/api/operations/debit": {
-      "post": {
-        "tags": [
-          "account-operation-controller"
-        ],
-        "operationId": "debitAccount",
-        "parameters": [
-          {
-            "name": "arg0",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "arg1",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "format": "double"
-            }
-          },
-          {
-            "name": "arg2",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/AccountOperationDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/operations/credit": {
-      "post": {
-        "tags": [
-          "account-operation-controller"
-        ],
-        "operationId": "creditAccount",
-        "parameters": [
-          {
-            "name": "arg0",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "arg1",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "format": "double"
-            }
-          },
-          {
-            "name": "arg2",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/AccountOperationDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/customers": {
       "get": {
         "tags": [
           "customer-controller"
         ],
-        "operationId": "all",
+        "operationId": "all_1",
         "responses": {
           "200": {
             "description": "OK",
@@ -379,7 +274,7 @@
         "tags": [
           "customer-controller"
         ],
-        "operationId": "create",
+        "operationId": "create_1",
         "requestBody": {
           "content": {
             "application/json": {
@@ -404,57 +299,12 @@
         }
       }
     },
-    "/api/operations/account/{accountId}": {
-      "get": {
-        "tags": [
-          "account-operation-controller"
-        ],
-        "operationId": "getOperationsByAccountId",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AccountOperationDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/bank-account/{id}": {
+    "/api/accounts": {
       "get": {
         "tags": [
           "bank-account-controller"
         ],
-        "operationId": "getBankAccountById",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BankAccountDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/bank-account/": {
-      "get": {
-        "tags": [
-          "bank-account-controller"
-        ],
-        "operationId": "getBankAccounts",
+        "operationId": "all_2",
         "responses": {
           "200": {
             "description": "OK",
@@ -465,6 +315,34 @@
                   "items": {
                     "$ref": "#/components/schemas/BankAccountDTO"
                   }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "bank-account-controller"
+        ],
+        "operationId": "create_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccountDTO"
                 }
               }
             }

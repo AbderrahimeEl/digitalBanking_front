@@ -14,23 +14,23 @@ export class AccountsService {
 
   // Bank Account endpoints
   public getBankAccounts(): Observable<BankAccountDTO[]> {
-    return this.http.get<BankAccountDTO[]>(`${this.apiUrl}/bank-account/`);
+    return this.http.get<BankAccountDTO[]>(`${this.apiUrl}/accounts`);
   }
 
   public getBankAccountById(id: number): Observable<BankAccountDTO> {
-    return this.http.get<BankAccountDTO>(`${this.apiUrl}/bank-account/${id}`);
+    return this.http.get<BankAccountDTO>(`${this.apiUrl}/accounts/${id}`);
   }
 
   public createBankAccount(bankAccount: BankAccountDTO): Observable<BankAccountDTO> {
-    return this.http.post<BankAccountDTO>(`${this.apiUrl}/bank-account`, bankAccount);
+    return this.http.post<BankAccountDTO>(`${this.apiUrl}/accounts`, bankAccount);
   }
 
   public updateBankAccount(bankAccount: BankAccountDTO): Observable<BankAccountDTO> {
-    return this.http.put<BankAccountDTO>(`${this.apiUrl}/bank-account`, bankAccount);
+    return this.http.put<BankAccountDTO>(`${this.apiUrl}/accounts/${bankAccount.id}`, bankAccount);
   }
 
   public deleteBankAccount(id: number) {
-    return this.http.delete(`${this.apiUrl}/bank-account`);
+    return this.http.delete(`${this.apiUrl}/accounts/${id}`);
   }
 
   // Account Operations endpoints
@@ -43,7 +43,7 @@ export class AccountsService {
   }
 
   public getOperationsByAccountId(accountId: number): Observable<AccountOperationDTO[]> {
-    return this.http.get<AccountOperationDTO[]>(`${this.apiUrl}/operations/account/${accountId}`);
+    return this.http.get<AccountOperationDTO[]>(`${this.apiUrl}/operations?accountId=${accountId}`);
   }
 
   public createOperation(operation: AccountOperationDTO): Observable<AccountOperationDTO> {
@@ -59,17 +59,25 @@ export class AccountsService {
   }
 
   public debitAccount(accountId: number, amount: number, description?: string): Observable<AccountOperationDTO> {
-    return this.http.post<AccountOperationDTO>(
-      `${this.apiUrl}/operations/debit?arg0=${accountId}&arg1=${amount}${description ? '&arg2=' + description : ''}`,
-      {}
-    );
+    const operation: AccountOperationDTO = {
+      id: 0, // Will be assigned by the server
+      date: new Date(),
+      amount: amount,
+      type: 'DEBIT',
+      bankAccountId: accountId
+    };
+    return this.createOperation(operation);
   }
 
   public creditAccount(accountId: number, amount: number, description?: string): Observable<AccountOperationDTO> {
-    return this.http.post<AccountOperationDTO>(
-      `${this.apiUrl}/operations/credit?arg0=${accountId}&arg1=${amount}${description ? '&arg2=' + description : ''}`,
-      {}
-    );
+    const operation: AccountOperationDTO = {
+      id: 0, // Will be assigned by the server
+      date: new Date(),
+      amount: amount,
+      type: 'CREDIT',
+      bankAccountId: accountId
+    };
+    return this.createOperation(operation);
   }
 
   // Keep these methods for backward compatibility
