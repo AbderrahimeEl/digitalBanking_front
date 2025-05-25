@@ -1,4 +1,100 @@
-<div class="container">
-  <div>{{customerId}}</div>
-  <div>{{customer | json}}</div>
+<div class="container mt-3">
+  <!-- Customer Information -->
+  <div class="card mb-3">
+    <div class="card-header">Customer Information</div>
+    <div class="card-body">
+      <div *ngIf="customer; else loadingCustomer">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-2">
+              <strong>ID:</strong> {{customer.id}}
+            </div>
+            <div class="mb-2">
+              <strong>First Name:</strong> {{customer.firstName}}
+            </div>
+            <div class="mb-2">
+              <strong>Last Name:</strong> {{customer.lastName}}
+            </div>
+            <div class="mb-2">
+              <strong>Email:</strong> {{customer.email}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #loadingCustomer>
+        <div *ngIf="errorMessage; else loading" class="alert alert-danger">
+          {{errorMessage}}
+        </div>
+        <ng-template #loading>
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Customer Accounts -->
+  <div class="card">
+    <div class="card-header">Customer Accounts</div>
+    <div class="card-body">
+      <ng-container *ngIf="accounts$ | async as accounts; else loadingAccounts">
+        <div *ngIf="accounts.length > 0; else noAccounts">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Created At</th>
+                <th>Balance</th>
+                <th>Currency</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let account of accounts">
+                <td>{{account.id}}</td>
+                <td>{{account.createdAt | date:'medium'}}</td>
+                <td>{{account.balance | number:'1.2-2'}}</td>
+                <td>{{account.currency}}</td>
+                <td>
+                  <span [ngClass]="{'badge bg-success': account.status === 'ACTIVE', 'badge bg-danger': account.status === 'INACTIVE'}">
+                    {{account.status}}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-primary" [routerLink]="['/accounts']" [queryParams]="{id: account.id}">
+                    Operations
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noAccounts>
+          <div class="alert alert-info">
+            This customer has no accounts.
+          </div>
+        </ng-template>
+      </ng-container>
+      <ng-template #loadingAccounts>
+        <div *ngIf="errorMessage; else loadingAccList" class="alert alert-danger">
+          {{errorMessage}}
+        </div>
+        <ng-template #loadingAccList>
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+  
+  <div class="mt-3">
+    <button class="btn btn-secondary" routerLink="/customers">Back to Customers</button>
+  </div>
 </div>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountsService } from '../services/accounts.service';
 import { AccountOperationDTO } from '../model/account.model';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-operations',
@@ -25,7 +25,6 @@ export class OperationsComponent implements OnInit {
     });
     this.handleGetAllOperations();
   }
-
   handleGetAllOperations() {
     this.operations = this.accountsService.getAllOperations().pipe(
       catchError(err => {
@@ -38,7 +37,9 @@ export class OperationsComponent implements OnInit {
   handleGetOperationsByAccountId() {
     const accountId = this.operationFormGroup.value.accountId;
     if (accountId) {
-      this.operations = this.accountsService.getOperationsByAccountId(accountId).pipe(
+      // Get all operations and filter on client side since API doesn't support filtering
+      this.operations = this.accountsService.getAllOperations().pipe(
+        map(operations => operations.filter(op => op.bankAccountId === parseInt(accountId, 10))),
         catchError(err => {
           this.errorMessage = err.message;
           return throwError(err);

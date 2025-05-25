@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 import {AccountsService} from "../services/accounts.service";
 import {catchError, Observable, throwError} from "rxjs";
 import {AccountDetails} from "../model/account.model";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-accounts',
@@ -17,8 +18,11 @@ export class AccountsComponent implements OnInit {
   operationFromGroup! : FormGroup;
   errorMessage! :string ;
 
-  constructor(private fb : FormBuilder, private accountService : AccountsService) { }
-
+  constructor(
+    private fb : FormBuilder, 
+    private accountService : AccountsService,
+    private route: ActivatedRoute
+  ) { }
   ngOnInit(): void {
     this.accountFormGroup=this.fb.group({
       accountId : this.fb.control('')
@@ -28,7 +32,17 @@ export class AccountsComponent implements OnInit {
       amount : this.fb.control(0),
       description : this.fb.control(null),
       accountDestination : this.fb.control(null)
-    })}
+    });
+    
+    // Check if an account ID was passed in the query parameters
+    this.route.queryParams.subscribe(params => {
+      const accountId = params['id'];
+      if (accountId) {
+        this.accountFormGroup.patchValue({ accountId });
+        this.handleSearchAccount();
+      }
+    });
+  }
 
   handleSearchAccount() {
     let accountId : string =this.accountFormGroup.value.accountId;

@@ -32,11 +32,16 @@ export class CustomersComponent implements OnInit {
       })
     );
   }
-
   handleSearchCustomers() {
-    let kw = this.searchFormGroup?.value.keyword;
+    let kw = this.searchFormGroup?.value.keyword?.toLowerCase();
     if (kw) {
-      this.customers = this.customerService.searchCustomers(kw).pipe(
+      // Get all customers and filter client-side
+      this.customers = this.customerService.getCustomers().pipe(
+        map(customers => customers.filter(c => 
+          c.firstName.toLowerCase().includes(kw) || 
+          c.lastName.toLowerCase().includes(kw) || 
+          c.email.toLowerCase().includes(kw)
+        )),
         catchError(err => {
           this.errorMessage = err.message;
           return throwError(err);
