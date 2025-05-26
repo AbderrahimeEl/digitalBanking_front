@@ -1,0 +1,10 @@
+/* Login page styles */
+.login-container {
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.alert {
+  margin-bottom: 20px;
+}

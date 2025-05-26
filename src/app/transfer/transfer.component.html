@@ -1,0 +1,75 @@
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h3>Transfer Funds</h3>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="transferForm" (ngSubmit)="handleTransfer()">
+        <!-- Source Account -->
+        <div class="mb-3">
+          <label class="form-label">Source Account:</label>
+          <select formControlName="accountSource" class="form-select">
+            <option value="">Select source account</option>
+            <option *ngFor="let account of accounts$ | async" [value]="account.id">
+              Account #{{ account.id }} - {{ account.balance }} {{ account.currency }} ({{ account.status }})
+            </option>
+          </select>
+          <div *ngIf="transferForm.get('accountSource')?.touched && transferForm.get('accountSource')?.errors?.['required']"
+            class="text-danger">Source account is required</div>
+        </div>
+
+        <!-- Destination Account -->
+        <div class="mb-3">
+          <label class="form-label">Destination Account:</label>
+          <select formControlName="accountDestination" class="form-select">
+            <option value="">Select destination account</option>
+            <option *ngFor="let account of accounts$ | async" [value]="account.id">
+              Account #{{ account.id }} - {{ account.balance }} {{ account.currency }} ({{ account.status }})
+            </option>
+          </select>
+          <div *ngIf="transferForm.get('accountDestination')?.touched && transferForm.get('accountDestination')?.errors?.['required']"
+            class="text-danger">Destination account is required</div>
+        </div>
+
+        <!-- Amount -->
+        <div class="mb-3">
+          <label class="form-label">Amount to Transfer:</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" formControlName="amount" class="form-control">
+          </div>
+          <div *ngIf="transferForm.get('amount')?.touched && transferForm.get('amount')?.errors?.['required']"
+            class="text-danger">Amount is required</div>
+          <div *ngIf="transferForm.get('amount')?.touched && transferForm.get('amount')?.errors?.['min']"
+            class="text-danger">Amount must be at least 10</div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+          <label class="form-label">Description:</label>
+          <textarea formControlName="description" class="form-control" rows="3"></textarea>
+          <div *ngIf="transferForm.get('description')?.touched && transferForm.get('description')?.errors?.['required']"
+            class="text-danger">Description is required</div>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div *ngIf="successMessage" class="alert alert-success mb-3">
+          {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage" class="alert alert-danger mb-3">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Submit & Reset Buttons -->
+        <div class="d-flex gap-2">
+          <button type="submit" [disabled]="transferForm.invalid" class="btn btn-primary">
+            <i class="bi bi-arrow-left-right"></i> Perform Transfer
+          </button>
+          <button type="button" (click)="resetForm()" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Reset
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

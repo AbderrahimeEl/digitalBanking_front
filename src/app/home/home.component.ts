@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
 })
-export class NavbarComponent implements OnInit {
+export class HomeComponent implements OnInit {
   isLoggedIn = false;
   isAdmin = false;
   isCustomer = false;
-  currentUserName = '';
+  username = '';
   customerId?: number;
 
   constructor(
@@ -20,19 +20,17 @@ export class NavbarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Subscribe to the current user observable to update navigation
     this.authService.currentUser$.subscribe(user => {
       this.isLoggedIn = !!user;
       this.isAdmin = user?.role === 'ROLE_ADMIN';
       this.isCustomer = user?.role === 'ROLE_CUSTOMER';
-      this.currentUserName = user?.username || '';
+      this.username = user?.username || '';
       this.customerId = user?.customerId;
+
+      // If not logged in, redirect to login
+      if (!this.isLoggedIn) {
+        this.router.navigate(['/login']);
+      }
     });
   }
-  
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
-
 }

@@ -6,13 +6,20 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { CustomersComponent } from './customers/customers.component';
 import { AccountsComponent } from './accounts/accounts.component';
-import {HttpClientModule} from "@angular/common/http";
-import {ReactiveFormsModule} from "@angular/forms";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import { ReactiveFormsModule } from "@angular/forms";
 import { NewCustomerComponent } from './new-customer/new-customer.component';
 import { CustomerAccountsComponent } from './customer-accounts/customer-accounts.component';
 import { OperationsComponent } from './operations/operations.component';
+import { AccountFormComponent } from './account-form/account-form.component';
+import { TransferComponent } from './transfer/transfer.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { HomeComponent } from './home/home.component';
 
-@NgModule({
+@NgModule({  
   declarations: [
     AppComponent,
     NavbarComponent,
@@ -20,7 +27,13 @@ import { OperationsComponent } from './operations/operations.component';
     AccountsComponent,
     NewCustomerComponent,
     CustomerAccountsComponent,
-    OperationsComponent
+    OperationsComponent,
+    AccountFormComponent,
+    TransferComponent,
+    LoginComponent,
+    RegisterComponent,
+    UnauthorizedComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +41,9 @@ import { OperationsComponent } from './operations/operations.component';
     HttpClientModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

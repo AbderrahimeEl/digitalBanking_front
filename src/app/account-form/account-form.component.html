@@ -1,0 +1,75 @@
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header">{{ isEditMode ? 'Edit Account' : 'Create New Account' }}</div>
+    <div class="card-body">
+      <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
+        <!-- Customer Selection -->
+        <div class="mb-3">
+          <label class="form-label">Customer:</label>
+          <select formControlName="customerId" class="form-select">
+            <option value="">Select a customer</option>
+            <option *ngFor="let customer of customers$ | async" [value]="customer.id">
+              {{ customer.firstName }} {{ customer.lastName }} ({{ customer.email }})
+            </option>
+          </select>
+          <div *ngIf="accountForm.get('customerId')?.touched && accountForm.get('customerId')?.errors?.['required']"
+            class="text-danger">Customer is required</div>
+        </div>
+
+        <!-- Balance -->
+        <div class="mb-3">
+          <label class="form-label">Initial Balance:</label>
+          <input type="number" formControlName="balance" class="form-control">
+          <div *ngIf="accountForm.get('balance')?.touched && accountForm.get('balance')?.errors?.['min']"
+            class="text-danger">Balance must be non-negative</div>
+        </div>
+
+        <!-- Currency -->
+        <div class="mb-3">
+          <label class="form-label">Currency:</label>
+          <input type="text" formControlName="currency" class="form-control">
+          <div *ngIf="accountForm.get('currency')?.touched && accountForm.get('currency')?.errors?.['required']"
+            class="text-danger">Currency is required</div>
+        </div>
+
+        <!-- Status -->
+        <div class="mb-3">
+          <label class="form-label">Status:</label>
+          <select formControlName="status" class="form-select">
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="INACTIVE">INACTIVE</option>
+          </select>
+        </div>
+
+        <!-- Over Draft -->
+        <div class="mb-3">
+          <label class="form-label">Overdraft Limit:</label>
+          <input type="number" formControlName="overDraft" class="form-control">
+          <div *ngIf="accountForm.get('overDraft')?.touched && accountForm.get('overDraft')?.errors?.['min']"
+            class="text-danger">Overdraft must be non-negative</div>
+        </div>
+
+        <!-- Interest Rate -->
+        <div class="mb-3">
+          <label class="form-label">Interest Rate:</label>
+          <input type="number" formControlName="interestRate" class="form-control">
+          <div *ngIf="accountForm.get('interestRate')?.touched && accountForm.get('interestRate')?.errors?.['min']"
+            class="text-danger">Interest rate must be non-negative</div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert alert-danger mb-3">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Submit & Cancel Buttons -->
+        <div class="d-flex gap-2">
+          <button type="submit" [disabled]="accountForm.invalid" class="btn btn-primary">
+            {{ isEditMode ? 'Update Account' : 'Create Account' }}
+          </button>
+          <button type="button" routerLink="/accounts" class="btn btn-secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

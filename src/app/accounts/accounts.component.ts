@@ -88,8 +88,7 @@ export class AccountsComponent implements OnInit {
         }
       });
     }
-    else if(operationType=='TRANSFER'){
-      this.accountService.transfer(accountId,accountDestination, amount,description).subscribe({
+    else if(operationType=='TRANSFER'){      this.accountService.transfer(accountId,accountDestination, amount,description).subscribe({
         next : (data)=>{
           alert("Success Transfer");
           this.operationFromGroup.reset();
@@ -98,8 +97,6 @@ export class AccountsComponent implements OnInit {
         error : (err)=>{
           console.log(err);
         }
-      });
-
-    }
+      });    }
   }
 }

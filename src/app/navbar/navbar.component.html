@@ -4,34 +4,74 @@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+          <a class="nav-link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="accountsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Accounts
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="accountsDropdown">
-            <li><a class="dropdown-item" routerLink="/accounts">Search Accounts</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" routerLink="/operations">Operations</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="customersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Customers
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="customersDropdown">
-            <li><a class="dropdown-item" routerLink="/customers">Customers List</a></li>
-            <li><a class="dropdown-item" routerLink="/new-customer">New Customer</a></li>
-          </ul>
-        </li>
+        
+        <!-- Only show these when logged in -->
+        <ng-container *ngIf="isLoggedIn">
+          <!-- Show Accounts dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="accountsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Accounts
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="accountsDropdown">
+              <!-- Admin-only options -->
+              <ng-container *ngIf="isAdmin">
+                <li><a class="dropdown-item" routerLink="/accounts">Search Accounts</a></li>
+                <li><a class="dropdown-item" routerLink="/new-account">New Account</a></li>
+                <li><hr class="dropdown-divider"></li>
+              </ng-container>
+              
+              <!-- Options for both roles -->
+              <li><a class="dropdown-item" routerLink="/operations">Operations</a></li>
+              <li><a class="dropdown-item" routerLink="/transfer">Transfer Funds</a></li>
+            </ul>
+          </li>
+          
+          <!-- Admin-only Customers dropdown -->
+          <li class="nav-item dropdown" *ngIf="isAdmin">
+            <a class="nav-link dropdown-toggle" href="#" id="customersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Customers
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="customersDropdown">
+              <li><a class="dropdown-item" routerLink="/customers">Customers List</a></li>
+              <li><a class="dropdown-item" routerLink="/new-customer">New Customer</a></li>
+            </ul>
+          </li>
+          
+          <!-- Customer-only option to view their accounts -->
+          <li class="nav-item" *ngIf="isCustomer && customerId">
+            <a class="nav-link" [routerLink]="['/customer-accounts', customerId]">My Accounts</a>
+          </li>
+        </ng-container>
       </ul>
-      <span class="navbar-text">
-        Banking Made Simple
-      </span>
+      
+      <ul class="navbar-nav ms-auto">
+        <!-- Show when logged in -->
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <span class="nav-link">
+            <i class="bi bi-person-circle me-1"></i>
+            {{ currentUserName }} ({{ isAdmin ? 'Admin' : 'Customer' }})
+          </span>
+        </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a class="nav-link" href="javascript:void(0);" (click)="logout()">
+            <i class="bi bi-box-arrow-right me-1"></i>Logout
+          </a>
+        </li>
+        
+        <!-- Show when logged out -->
+        <ng-container *ngIf="!isLoggedIn">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/register">Register</a>
+          </li>
+        </ng-container>
+      </ul>
     </div>
   </div>
 </nav>

@@ -13,6 +13,8 @@ export class OperationsComponent implements OnInit {
   operations!: Observable<AccountOperationDTO[]>;
   errorMessage!: string;
   operationFormGroup!: FormGroup;
+  editMode: boolean = false;
+  currentOperation: AccountOperationDTO | null = null;
 
   constructor(private fb: FormBuilder, private accountsService: AccountsService) { }
 
@@ -49,18 +51,26 @@ export class OperationsComponent implements OnInit {
       this.handleGetAllOperations();
     }
   }
-
   handleSubmitOperation() {
     const accountId = this.operationFormGroup.value.accountId;
     const amount = this.operationFormGroup.value.amount;
     const description = this.operationFormGroup.value.description;
     const operationType = this.operationFormGroup.value.operationType;
 
-    if (operationType === 'CREDIT') {
-      this.accountsService.creditAccount(accountId, amount, description).subscribe({
+    if (this.editMode && this.currentOperation) {
+      // Update existing operation
+      const updatedOperation: AccountOperationDTO = {
+        id: this.currentOperation.id,
+        date: this.currentOperation.date,
+        amount: amount,
+        type: operationType,
+        bankAccountId: parseInt(accountId, 10)
+      };
+
+      this.accountsService.updateOperation(updatedOperation).subscribe({
         next: (data) => {
-          alert('Success Credit');
-          this.operationFormGroup.patchValue({ amount: 0, description: '' });
+          alert('Operation updated successfully');
+          this.resetForm();
           this.handleGetOperationsByAccountId();
         },
         error: (err) => {
@@ -68,12 +78,54 @@ export class OperationsComponent implements OnInit {
           this.errorMessage = err.message;
         }
       });
-    } else if (operationType === 'DEBIT') {
-      this.accountsService.debitAccount(accountId, amount, description).subscribe({
-        next: (data) => {
-          alert('Success Debit');
-          this.operationFormGroup.patchValue({ amount: 0, description: '' });
-          this.handleGetOperationsByAccountId();
+    } else {
+      // Create new operation
+      if (operationType === 'CREDIT') {
+        this.accountsService.creditAccount(accountId, amount, description).subscribe({
+          next: (data) => {
+            alert('Success Credit');
+            this.resetForm();
+            this.handleGetOperationsByAccountId();
+          },
+          error: (err) => {
+            console.log(err);
+            this.errorMessage = err.message;
+          }
+        });
+      } else if (operationType === 'DEBIT') {
+        this.accountsService.debitAccount(accountId, amount, description).subscribe({
+          next: (data) => {
+            alert('Success Debit');
+            this.resetForm();
+            this.handleGetOperationsByAccountId();
+          },
+          error: (err) => {
+            console.log(err);
+            this.errorMessage = err.message;
+          }
+        });
+      }
+    }
+  }
+
+  handleEditOperation(operation: AccountOperationDTO) {
+    this.editMode = true;
+    this.currentOperation = operation;
+    
+    this.operationFormGroup.patchValue({
+      accountId: operation.bankAccountId,
+      amount: operation.amount,
+      operationType: operation.type,
+      description: ''  // API doesn't store description
+    });
+  }
+
+  handleDeleteOperation(operationId: number) {
+    if (confirm('Are you sure you want to delete this operation?')) {
+      this.accountsService.deleteOperation(operationId).subscribe({
+        next: () => {
+          alert('Operation deleted successfully');
+          this.handleGetAllOperations();
         },
         error: (err) => {
           console.log(err);
@@ -81,5 +133,18 @@ export class OperationsComponent implements OnInit {
         }
       });
     }
+  }
+
+  resetForm() {
+    this.operationFormGroup.patchValue({ 
+      amount: 0, 
+      description: '' 
+    });
+    this.editMode = false;
+    this.currentOperation = null;
+  }
+
+  cancelEdit() {
+    this.resetForm();
   }
 }
