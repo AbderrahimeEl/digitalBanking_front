@@ -134,7 +134,7 @@ export class AccountsService {
   /**
    * Legacy methods adapted to match the new API
    */
-  
+
   /**
    * Get account details with pagination (adapted to use new API)
    * This simulates the old behavior by using standard endpoints
@@ -142,7 +142,7 @@ export class AccountsService {
   public getAccount(accountId: string, page: number, size: number): Observable<AccountDetails> {
     // Convert string accountId to number
     const id = parseInt(accountId, 10);
-    
+
     // First get the bank account
     return new Observable<AccountDetails>(observer => {
       this.getBankAccountById(id).subscribe({
@@ -152,12 +152,12 @@ export class AccountsService {
             next: (operations) => {
               // Filter operations for this account
               const accountOperations = operations.filter(op => op.bankAccountId === id);
-              
+
               // Create AccountDetails with pagination
               const startIndex = page * size;
               const endIndex = Math.min(startIndex + size, accountOperations.length);
               const pageOperations = accountOperations.slice(startIndex, endIndex);
-              
+
               const accountDetails: AccountDetails = {
                 accountId: accountId,
                 balance: account.balance,
@@ -166,7 +166,7 @@ export class AccountsService {
                 pageSize: size,
                 accountOperationDTOS: pageOperations
               };
-              
+
               observer.next(accountDetails);
               observer.complete();
             },
@@ -195,28 +195,16 @@ export class AccountsService {
   }
 
   /**
-   * Create a transfer between accounts
-   * Implemented using two operations: DEBIT from source and CREDIT to destination
+   * Create a transfer between accounts using the new transfer endpoint
    */
-  public transfer(accountSource: string, accountDestination: string, amount: number, description: string) {
-    const sourceId = parseInt(accountSource, 10);
-    const destId = parseInt(accountDestination, 10);
-    
-    // First debit the source account
-    return new Observable(observer => {
-      this.debitAccount(sourceId, amount, `Transfer to ${accountDestination}: ${description}`).subscribe({
-        next: () => {
-          // Then credit the destination account
-          this.creditAccount(destId, amount, `Transfer from ${accountSource}: ${description}`).subscribe({
-            next: (data) => {
-              observer.next(data);
-              observer.complete();
-            },
-            error: (err) => observer.error(err)
-          });
-        },
-        error: (err) => observer.error(err)
-      });
-    });
+  public transfer(accountSource: string, accountDestination: string, amount: number, description: string): Observable<any> {
+    const transferData = {
+      sourceAccountId: parseInt(accountSource, 10),
+      destinationAccountId: parseInt(accountDestination, 10),
+      amount: amount,
+      description: description
+    };
+
+    return this.http.post(`${this.apiUrl}/transfers`, transferData);
   }
 }
